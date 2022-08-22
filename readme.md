@@ -11,3 +11,8 @@ Create an CRUD endpoint for managing contacts. A contact should have at least th
 - Address
 - Email
 - Mobile phone number
+
+#### UC2
+Create a CRUD endpoint for skills. A contact can have multiple skills and a skill can belong to multiple contacts. A skill should have the following attributes and appropriate validation:
+- Name
+- Level (expertise)

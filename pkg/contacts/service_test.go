@@ -9,7 +9,7 @@ import (
 )
 
 // Test the contacts service. Trying to hit all possible responses
-func TestCreateContact(t *testing.T) {
+func TestContactService(t *testing.T) {
 	s := new(memory.Storage)
 	contactService := contacts.NewService(s)
 

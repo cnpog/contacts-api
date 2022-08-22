@@ -9,4 +9,12 @@ type Contact struct {
 	Address           string
 	Email             string
 	MobilePhoneNumber string
+	Skills            []string
+}
+
+// Skill is a storage Entity for a Skill
+type Skill struct {
+	Id    string
+	Name  string
+	Level string
 }
