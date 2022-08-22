@@ -59,7 +59,7 @@ func deleteContact(c contacts.Service) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
 		err := c.DeleteContact(ctx.Param("id"))
 		if err != nil {
-			return ctx.JSON(400, err.Error())
+			return ctx.JSON(404, err.Error())
 		}
 		return ctx.JSON(204, nil)
 	}
