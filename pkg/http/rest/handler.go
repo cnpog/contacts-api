@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"contacts-api/pkg/auth"
 	"contacts-api/pkg/contacts"
 	"contacts-api/pkg/skills"
 	"contacts-api/pkg/skillstocontact"
@@ -8,24 +9,27 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Handler(c contacts.Service, s skills.Service, sc skillstocontact.Service) *echo.Echo {
+func Handler(c contacts.Service, s skills.Service, sc skillstocontact.Service, a auth.Service) *echo.Echo {
 	router := echo.New()
-	router.GET("/contacts", readContacts(c))
-	router.GET("/contacts/:id", readContact(c))
-	router.POST("/contacts", createContact(c))
-	router.PUT("/contacts/:id", updateContact(c))
-	router.DELETE("/contacts/:id", deleteContact(c))
+	openRouter := router.Group("")
+	openRouter.GET("/skills", readSkills(s))
+	openRouter.GET("/skills/:id", readSkill(s))
+	openRouter.POST("/skills", createSkill(s))
+	openRouter.PUT("/skills/:id", updateSkill(s))
+	openRouter.DELETE("/skills/:id", deleteSkill(s))
+	openRouter.GET("/contacts", readContacts(c))
+	openRouter.GET("/contacts/:id", readContact(c))
+	openRouter.GET("/contacts/:id/skills", readContactSkills(sc))
+	openRouter.POST("/contacts", createContact(c))
 
-	router.GET("/skills", readSkills(s))
-	router.GET("/skills/:id", readSkill(s))
-	router.POST("/skills", createSkill(s))
-	router.PUT("/skills/:id", updateSkill(s))
-	router.DELETE("/skills/:id", deleteSkill(s))
+	restrictedRouter := router.Group("/private/contacts/:id")
 
-	router.GET("/contacts/:id/skills", readContactSkills(sc))
-	router.POST("/contacts/:id/skills", addContactSkills(sc))
-	router.PUT("/contacts/:id/skills", updateContactSkills(sc))
-	router.DELETE("/contacts/:id/skills", deleteContactSkills(sc))
+	restrictedRouter.Use(authMiddleware(a))
+	restrictedRouter.PUT("", updateContact(c))
+	restrictedRouter.DELETE("", deleteContact(c))
+	restrictedRouter.POST("/skills", addContactSkills(sc))
+	restrictedRouter.PUT("/skills", updateContactSkills(sc))
+	restrictedRouter.DELETE("/skills", deleteContactSkills(sc))
 
 	return router
 }
